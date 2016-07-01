@@ -78,6 +78,10 @@ const ThemeSheet = React.createClass( {
 		window.scroll( 0, 0 );
 	},
 
+	isLoaded() {
+		return !! this.props.name;
+	},
+
 	hideSiteSelectorModal() {
 		this.setState( { selectedAction: null } );
 	},
@@ -184,7 +188,7 @@ const ThemeSheet = React.createClass( {
 
 		return (
 			<SectionNav className="themes__sheet-section-nav" selectedText={ filterStrings[ currentSection ] }>
-				{ this.props.name && nav }
+				{ this.isLoaded() && nav }
 			</SectionNav>
 		);
 	},
@@ -303,6 +307,10 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderPrice() {
+		if ( ! this.isLoaded() || this.isActive() ) {
+			return '';
+		}
+
 		let price = this.props.price;
 
 		if ( this.props.selectedSite && this.props.purchased ) {
@@ -314,16 +322,29 @@ const ThemeSheet = React.createClass( {
 		return <span className="themes__sheet-action-bar-cost">{ price }</span>;
 	},
 
-	renderSheet() {
-		let actionTitle = <span className="themes__sheet-button-placeholder">loading......</span>;
+	renderButton() {
+		const { isLoggedIn, price } = this.props;
+		const placeholder = <span className="themes__sheet-button-placeholder">loading......</span>;
+
+		let actionTitle;
 		if ( this.isActive() ) {
 			actionTitle = i18n.translate( 'Customize' );
-		} else if ( this.props.name ) {
-			actionTitle = this.props.isLoggedIn ? i18n.translate( 'Activate this design' ) : i18n.translate( 'Pick this design' );
+		} else if ( isLoggedIn && ! price ) {
+			actionTitle = i18n.translate( 'Activate this design' );
+		} else {
+			actionTitle = i18n.translate( 'Pick this design' );
 		}
 
+		return (
+			<Button className="themes__sheet-primary-button" onClick={ this.onPrimaryClick }>
+				{ this.isLoaded() ? actionTitle : placeholder }
+				{ this.renderPrice() }
+			</Button>
+		);
+	},
+
+	renderSheet() {
 		const section = this.validateSection( this.props.section );
-		const priceElement = this.renderPrice();
 		const siteID = this.props.selectedSite && this.props.selectedSite.ID;
 
 		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${ siteID ? '/:site_id' : '' }`;
@@ -350,10 +371,7 @@ const ThemeSheet = React.createClass( {
 				<HeaderCake className="themes__sheet-action-bar"
 							backHref={ this.props.backPath }
 							backText={ i18n.translate( 'All Themes' ) }>
-					<Button className="themes__sheet-primary-button" onClick={ this.onPrimaryClick }>
-						{ actionTitle }
-						{ ! this.isActive() && priceElement }
-					</Button>
+					{ this.renderButton() }
 				</HeaderCake>
 				<div className="themes__sheet-columns">
 					<div className="themes__sheet-column-left">
