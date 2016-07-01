@@ -157,7 +157,9 @@ const ThemeSheet = React.createClass( {
 			<div className="themes__sheet-screenshot">
 				<a className="themes__sheet-preview-link" onClick={ this.togglePreview } >
 					<Gridicon icon="themes" size={ 18 } />
-					<span className="themes__sheet-preview-link-text">{ i18n.translate( 'Open Live Demo', { context: 'Individual theme live preview button' } ) }</span>
+					<span className="themes__sheet-preview-link-text">
+						{ i18n.translate( 'Open Live Demo', { context: 'Individual theme live preview button' } ) }
+					</span>
 				</a>
 				{ this.props.screenshot && img }
 			</div>
@@ -274,7 +276,7 @@ const ThemeSheet = React.createClass( {
 
 	renderPreview() {
 		const buttonLabel = this.props.isLoggedIn ? i18n.translate( 'Try & Customize' ) : i18n.translate( 'Pick this design' );
-		return(
+		return (
 			<ThemePreview showPreview={ this.state.showPreview }
 				theme={ this.props }
 				onClose={ this.togglePreview }
@@ -291,7 +293,7 @@ const ThemeSheet = React.createClass( {
 			comment: 'Message displayed when requested theme was not found',
 		} );
 
-		return(
+		return (
 			<Main>
 				<EmptyContentComponent
 					title={ emptyContentTitle }
